@@ -6,6 +6,17 @@
 
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
 
+# Kernel
+BOARD_KERNEL_IMAGE_NAME := Image.lz4
+TARGET_KERNEL_CONFIG := zuma_gki_defconfig
+TARGET_KERNEL_SOURCE := kernel/google/zuma/core-kernel
+TARGET_NEEDS_DTBOIMAGE := true
+
+# Kernel modules
+BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE := device/google/zuma/vendor_dlkm.modules.blocklist
+TARGET_KERNEL_EXT_MODULE_ROOT := kernel/google/zuma/private/
+#TARGET_KERNEL_ADDITIONAL_FLAGS := EXTRA_CFLAGS+="-I$(KERNEL_SRC)/../extra/private/google-modules/soc/gs/include"
+
 # Lineage Health
 TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE := true
 TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE := false
