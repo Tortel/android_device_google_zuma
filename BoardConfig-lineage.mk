@@ -15,7 +15,46 @@ TARGET_NEEDS_DTBOIMAGE := true
 # Kernel modules
 BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE := device/google/zuma/vendor_dlkm.modules.blocklist
 TARGET_KERNEL_EXT_MODULE_ROOT := kernel/google/zuma/private/
-#TARGET_KERNEL_ADDITIONAL_FLAGS := EXTRA_CFLAGS+="-I$(KERNEL_SRC)/../extra/private/google-modules/soc/gs/include"
+
+# Use a prebuilt kernel for now
+TARGET_FORCE_PREBUILT_KERNEL := true
+
+TARGET_KERNEL_DIR ?= device/google/shusky-kernel
+TARGET_BOARD_KERNEL_HEADERS := device/google/shusky-kernel/kernel-headers
+
+BOARD_PREBUILT_BOOTIMAGE := $(wildcard $(TARGET_KERNEL_DIR)/boot.img)
+ifneq (,$(BOARD_PREBUILT_BOOTIMAGE))
+TARGET_NO_KERNEL := true
+else
+TARGET_NO_KERNEL := false
+endif
+
+BOARD_PREBUILT_DTBIMAGE_DIR := $(TARGET_KERNEL_DIR)
+BOARD_PREBUILT_DTBOIMAGE := $(BOARD_PREBUILT_DTBIMAGE_DIR)/dtbo.img
+
+KERNEL_MODULE_DIR := $(TARGET_KERNEL_DIR)
+KERNEL_MODULES := $(wildcard $(KERNEL_MODULE_DIR)/*.ko)
+
+BOARD_SYSTEM_KERNEL_MODULES_BLOCKLIST_FILE := $(KERNEL_MODULE_DIR)/system_dlkm.modules.blocklist
+BOARD_VENDOR_KERNEL_MODULES_BLOCKLIST_FILE := $(KERNEL_MODULE_DIR)/vendor_dlkm.modules.blocklist
+
+BOARD_VENDOR_KERNEL_RAMDISK_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_MODULE_DIR)/vendor_kernel_boot.modules.load))
+ifndef BOARD_VENDOR_KERNEL_RAMDISK_KERNEL_MODULES_LOAD
+$(error vendor_kernel_boot.modules.load not found or empty)
+endif
+BOARD_VENDOR_KERNEL_RAMDISK_KERNEL_MODULES := $(addprefix $(KERNEL_MODULE_DIR)/, $(notdir $(BOARD_VENDOR_KERNEL_RAMDISK_KERNEL_MODULES_LOAD)))
+
+BOARD_VENDOR_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_MODULE_DIR)/vendor_dlkm.modules.load))
+ifndef BOARD_VENDOR_KERNEL_MODULES_LOAD
+$(error vendor_dlkm.modules.load not found or empty)
+endif
+BOARD_VENDOR_KERNEL_MODULES := $(addprefix $(KERNEL_MODULE_DIR)/, $(notdir $(BOARD_VENDOR_KERNEL_MODULES_LOAD)))
+
+BOARD_SYSTEM_KERNEL_MODULES_LOAD := $(strip $(shell cat $(KERNEL_MODULE_DIR)/system_dlkm.modules.load))
+ifndef BOARD_SYSTEM_KERNEL_MODULES_LOAD
+$(error system_dlkm.modules.load not found or empty)
+endif
+BOARD_SYSTEM_KERNEL_MODULES := $(addprefix $(KERNEL_MODULE_DIR)/, $(notdir $(BOARD_SYSTEM_KERNEL_MODULES_LOAD)))
 
 # Lineage Health
 TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE := true
