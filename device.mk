@@ -89,6 +89,8 @@ PRODUCT_SOONG_NAMESPACES += \
 	vendor/google_nos/test/system-test-harness \
 	vendor/google/camera
 
+LOCAL_KERNEL := $(TARGET_KERNEL_DIR)/Image.lz4
+
 # Set the environment variable to switch the Keymint HAL service to Rust
 TRUSTY_KEYMINT_IMPL := rust
 
@@ -330,9 +332,6 @@ PRODUCT_SHIPPING_API_LEVEL := 34
 # Enforce the Product interface
 PRODUCT_PRODUCT_VNDK_VERSION := current
 PRODUCT_ENFORCE_PRODUCT_PARTITION_INTERFACE := true
-
-TARGET_KERNEL_DIR ?= device/google/shusky-kernel
-LOCAL_KERNEL := $(TARGET_KERNEL_DIR)/Image.lz4
 
 # Init files
 PRODUCT_COPY_FILES += \
